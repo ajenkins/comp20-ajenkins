@@ -6,14 +6,17 @@
 <title>Fecesbook</title>
 <script type="text/javascript" charset="utf-8">
     function addUpdate() {
-        var element = document.getElementById("msg")
-        var textIn = element.value;
+        var message = document.getElementById("msg")
+        var textIn = message.value;
         var d = new Date();
         var timeStamp = (d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear() + " " + 
                         d.getHours() + ":" + d.getMinutes();
-        var update = document.createTextNode(timeStamp + textIn);
-        element.insertBefore(update, element.firstChild);
-        alert("Did i get here?");
+        var newNode = document.createElement("p");
+        var update = document.createTextNode(timeStamp + " - " + textIn);
+        newNode.appendChild(update);
+        var status = document.getElementById("status");
+        status.insertBefore(newNode, status.firstChild);
+        //alert("Did i get here?");
     }
 </script>
 </head>
