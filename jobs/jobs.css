@@ -1,15 +1,14 @@
 body {
     font: 14px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
+    background-color: #EEE;
 }
 
-div {
+#job {
+    width: 40%;
     
-}
-
-p {
-    
-}
-
-.list {
-    
+    background-color: rgb(100,255,100);
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #999;
 }
