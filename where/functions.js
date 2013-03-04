@@ -44,22 +44,58 @@ function fetch(url) {
 }
 
 function createMap() {
-    myLat = 0;
-    myLng = 0;
+    myLat = 42.358056;
+    myLng = -71.063611;
     me = new google.maps.LatLng(myLat, myLng);
     myOptions = {
-                zoom: 13, // The larger the zoom number, the bigger the zoom
+                zoom: 11,
                 center: me,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
     map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-    console.log("Did I get here?");
+}
 
+function updateLocation() {
+    me = new google.maps.LatLng(myLat,myLng);
+    map.panTo(me);
+    map.setZoom(13);
+}
+
+function getLocation() {
+    if (navigator.geolocation) { 
+        navigator.geolocation.getCurrentPosition(function(position) {
+            myLat = position.coords.latitude;
+            myLng = position.coords.longitude;
+            updateLocation();
+            renderElements();
+        });
+    }
+    else {
+        alert("Geolocation is not supported by your web browser.");
+    }
+}
+
+function renderElements() {
+    // Marker on me
+    var marker_me = new google.maps.Marker({
+                position: me,
+                title: "Me"
+            });
+    marker_me.setMap(map);
+
+    // InfoWindow for me
+    var infowindow = new google.maps.InfoWindow();
+    var myMessage = "You are at: " + myLat + ", " + myLng;
+    console.log(myMessage);
+    google.maps.event.addListener(marker_me, 'click', function() {
+        infowindow.setContent(myMessage);
+        infowindow.open(map, marker_me);
+    });
 }
 
 function run() {
     var schedule = fetch("http://mbtamap-cedar.herokuapp.com/mapper/redline.json");
     var locations = fetch("http://messagehub.herokuapp.com/a3.json");
     createMap();
-    
+    getLocation();    
 }

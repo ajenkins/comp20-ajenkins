@@ -1,13 +1,5 @@
-body {
-    font: 14px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
-    background-color: #EEE;
-}
-
-#job {
-    width: 40%;
-    background-color: rgb(100,255,100);
-    margin: 20px auto;
-    padding: 20px;
-    border-radius: 10px;
-    border: 1px solid #999;
+html, body, #map_canvas {
+    margin: 0;
+    padding: 0;
+    height: 100%;
 }
