@@ -102,6 +102,52 @@ function redLine() {
     return stations;
 }
 
+function redLineKeys() {
+    var stations = new Object();
+    stations["RALEN"] = "alewife";
+    stations["RDAVN"] = "davis";
+    stations["RDAVS"] = "davis";
+    stations["RPORN"] = "porter";
+    stations["RPORS"] = "porter";
+    stations["RHARN"] = "harvard";
+    stations["RHARS"] = "harvard";
+    stations["RCENN"] = "central";
+    stations["RCENS"] = "central";
+    stations["RKENN"] = "kendall";
+    stations["RKENS"] = "kendall";
+    stations["RMGHN"] = "charles";
+    stations["RMGHS"] = "charles";
+    stations["RPRKN"] = "park";
+    stations["RPRKS"] = "park";
+    stations["RDTCN"] = "downtown";
+    stations["RDTCS"] = "downtown";
+    stations["RSOUN"] = "south";
+    stations["RSOUS"] = "south";
+    stations["RBRON"] = "broadway";
+    stations["RBROS"] = "broadway";
+    stations["RANDN"] = "andrew";
+    stations["RANDS"] = "andrew";
+    stations["RJFKN"] = "jfk";
+    stations["RJFKS"] = "jfk";
+    stations["RSAVN"] = "savin";
+    stations["RSAVS"] = "savin";
+    stations["RFIEN"] = "fields";
+    stations["RFIES"] = "fields";
+    stations["RSHAN"] = "shawmut";
+    stations["RSHAS"] = "shawmut";
+    stations["RASHS"] = "ashmont";
+    stations["RNQUN"] = "nquincy";
+    stations["RNQUS"] = "nquincy";
+    stations["RWOLN"] = "wollaston";
+    stations["RWOLS"] = "wollaston";
+    stations["RQUCN"] = "quincyc";
+    stations["RQUCS"] = "quincyc";
+    stations["RQUAN"] = "quincya";
+    stations["RQUAS"] = "quincya";
+    stations["RBRAS"] = "braintree";
+    return stations;
+}
+
 function redLineCodes() {
     var stations = new Object();
     stations.alewife = ["RALEN"];
@@ -129,20 +175,21 @@ function redLineCodes() {
     return stations;
 }
 
+// Returns the messages for every station
 function buildSchedules() {
     var stations = new Object();
     
     for (var i = 0; i < schedule.length; i++) {
-        var message = schedule[i].InformationType + " at " + schedule[i].Time;
         var code = schedule[i].PlatformKey;
-        var key = findKey(code);
-        //stations[key] = 
+        var key = station_keys[code];
+        var direction = code.substring(4,5);
+        var message = direction + ": Arriving in " + schedule[i].TimeRemaining + " minutes";
+        stations[key] += "<p>" + message + "</p>";
+    }
+    for (var key in stations) {
+        stations[key] = stations[key].substring(9);
     }
     return stations;
-}
-
-function findKey(code) {
-    console.log("get rid of this");
 }
 
 function renderElements() {
@@ -158,6 +205,8 @@ function renderElements() {
     // Render red line T-stops marker and window
     station_obj = redLine();
     station_codes = redLineCodes();
+    station_keys = redLineKeys();
+    schedule_obj = buildSchedules();
     for (var key in station_obj) {
         var station = new google.maps.Marker({
             position: station_obj[key],
@@ -165,7 +214,7 @@ function renderElements() {
             title: key,
             icon: "t_icon.gif"
         });
-        attachMessage(station, getSchedule(key));
+        attachMessage(station, key + schedule_obj[key]);
 
     }
 
