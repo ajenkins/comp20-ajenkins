@@ -68,10 +68,11 @@ function getLocation() {
             myLng = position.coords.longitude;
             updateLocation();
             renderElements();
-        });
+        }, function() {renderElements();}, {timeout:3000});
     }
     else {
         alert("Geolocation is not supported by your web browser.");
+        renderElements();
     }
 }
 
@@ -200,7 +201,29 @@ function renderElements() {
             });
     marker_me.setMap(map);
 
-    
+    // Carmen and Waldo
+    if (locations) {
+        for (var i = 0; i < locations.length; i++) {
+            var myfriend = locations[i];
+            var icon = "waldo.png";
+            if (myfriend.name == "Carmen Sandiego") {
+                icon = "carmen.png";
+            }
+            var loc = new google.maps.LatLng(myfriend.loc.latitude,
+                                             myfriend.loc.longitude);
+            var friend_marker = new google.maps.Marker({
+                position: loc,
+                map: map,
+                title: myfriend.name,
+                icon: icon
+            });
+            var distance = google.maps.geometry.spherical.computeDistanceBetween(me, loc);
+            distance /= 1609.34;
+            var message = "<p>Hi, I'm " + locations[i].name + "!</p>";
+            message += "<p>I am " + distance + " miles from your location.</p>";
+            attachMessage(friend_marker, message);
+       }
+    }
 
     // Render red line T-stops marker and window
     station_obj = redLine();
@@ -277,5 +300,5 @@ function run() {
     schedule = fetch("http://mbtamap-cedar.herokuapp.com/mapper/redline.json");
     locations = fetch("http://messagehub.herokuapp.com/a3.json");
     createMap();
-    getLocation();    
+    getLocation();   
 }
