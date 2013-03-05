@@ -102,6 +102,49 @@ function redLine() {
     return stations;
 }
 
+function redLineCodes() {
+    var stations = new Object();
+    stations.alewife = ["RALEN"];
+    stations.davis = ["RDAVN", "RDAVS"];
+    stations.porter = ["RPORN", "RPORS"];
+    stations.harvard = ["RHARN", "RHARS"];
+    stations.central = ["RCENN", "RCENS"];
+    stations.kendall = ["RKENN", "RKENS"];
+    stations.charles = ["RMGHN", "RMGHS"];
+    stations.park = ["RPRKN", "RPRKS"];
+    stations.downtown = ["RDTCN", "RDTCS"];
+    stations.south = ["RSOUN", "RSOUS"];
+    stations.broadway = ["RBRON", "RBROS"];
+    stations.andrew = ["RANDN", "RANDS"];
+    stations.jfk = ["RJFKN", "RJFKS"];
+    stations.savin = ["RSAVN", "RSAVS"];
+    stations.fields = ["RFIEN", "RFIES"];
+    stations.shawmut = ["RSHAN", "RSHAS"];
+    stations.ashmont = ["RASHS"];
+    stations.nquincy = ["RNQUN", "RNQUS"];
+    stations.wollaston = ["RWOLN", "RWOLS"];
+    stations.quincyc = ["RQUCN", "RQUCS"];
+    stations.quincya = ["RQUAN", "RQUAS"];
+    stations.braintree = ["RBRAS"];
+    return stations;
+}
+
+function buildSchedules() {
+    var stations = new Object();
+    
+    for (var i = 0; i < schedule.length; i++) {
+        var message = schedule[i].InformationType + " at " + schedule[i].Time;
+        var code = schedule[i].PlatformKey;
+        var key = findKey(code);
+        //stations[key] = 
+    }
+    return stations;
+}
+
+function findKey(code) {
+    console.log("get rid of this");
+}
+
 function renderElements() {
     // Marker on me
     var marker_me = new google.maps.Marker({
@@ -110,16 +153,11 @@ function renderElements() {
             });
     marker_me.setMap(map);
 
-    // InfoWindow for me
-    var infowindow = new google.maps.InfoWindow();
-    var myMessage = "You are at: " + myLat + ", " + myLng;
-    google.maps.event.addListener(marker_me, 'click', function() {
-        infowindow.setContent(myMessage);
-        infowindow.open(map, marker_me);
-    });
+    
 
-    // Render red line T-stops
+    // Render red line T-stops marker and window
     station_obj = redLine();
+    station_codes = redLineCodes();
     for (var key in station_obj) {
         var station = new google.maps.Marker({
             position: station_obj[key],
@@ -127,7 +165,8 @@ function renderElements() {
             title: key,
             icon: "t_icon.gif"
         });
-        attachMessage(station, key);
+        attachMessage(station, getSchedule(key));
+
     }
 
     // Render polyline connecting red line
@@ -137,6 +176,34 @@ function renderElements() {
         map: map,
         strokeColor: 'red'
     });
+    
+    // InfoWindow for me
+    var infowindow = new google.maps.InfoWindow();
+    var myPosMessage = "You are at: " + myLat + "\u00B0 N, " + myLng + "\u00B0 E";
+    var closestToMe = nearestStation(me);
+    var closestName = closestToMe[0];
+    var closestDistance = closestToMe[1] / 1609.34;
+    var closestToMeMessage = "You are closest to " + closestName + ". It is " +
+                                closestDistance + " miles away.";
+    var myMessage = myPosMessage + " . " + closestToMeMessage;
+    google.maps.event.addListener(marker_me, 'click', function() {
+        infowindow.setContent(myMessage);
+        infowindow.open(map, marker_me);
+    });
+
+}
+
+function nearestStation(loc) {
+    var shortestDistance = google.maps.geometry.spherical.computeDistanceBetween(loc,station_obj.alewife);
+    var closestStation = 'alewife';
+    for (var key in station_obj) {
+        var distance = google.maps.geometry.spherical.computeDistanceBetween(loc,station_obj[key]);
+        if (distance < shortestDistance) {
+            shortestDistance = distance;
+            closestStation = key;
+        }
+    }
+    return [closestStation, shortestDistance];
 }
 
 function obj_to_array (obj) {
@@ -148,18 +215,18 @@ function obj_to_array (obj) {
 }
 
 function attachMessage(marker, message) {
-     var infowindow = new google.maps.InfoWindow({
+    var infowindow = new google.maps.InfoWindow({
          content: message
-     });
+    });
 
-     google.maps.event.addListener(marker, 'click', function() {
+    google.maps.event.addListener(marker, 'click', function() {
         infowindow.open(marker.get('map'), marker);
-     });
+    });
 }
 
 function run() {
-    var schedule = fetch("http://mbtamap-cedar.herokuapp.com/mapper/redline.json");
-    var locations = fetch("http://messagehub.herokuapp.com/a3.json");
+    schedule = fetch("http://mbtamap-cedar.herokuapp.com/mapper/redline.json");
+    locations = fetch("http://messagehub.herokuapp.com/a3.json");
     createMap();
     getLocation();    
 }
