@@ -5,23 +5,34 @@
 <head>
 <title>Fecesbook</title>
 <script type="text/javascript" charset="utf-8">
+    function render_updates() {
+        for (key in localStorage) {
+            var newNode = document.createElement("p");
+            var update = document.createTextNode(localStorage[key]);
+            newNode.appendChild(update);
+            var status = document.getElementById("status");
+            status.insertBefore(newNode, status.firstChild);
+        }
+    }
+
     function addUpdate() {
         var message = document.getElementById("msg")
         var textIn = message.value;
         var d = new Date();
         var timeStamp = (d.getMonth() + 1) + "/" + d.getDate() + "/" + d.getFullYear() + " " + 
                         d.getHours() + ":" + d.getMinutes();
+        var output =  timeStamp + " - " + textIn;
+        localStorage.setItem(d.getTime(), output);
         var newNode = document.createElement("p");
-        var update = document.createTextNode(timeStamp + " - " + textIn);
+        var update = document.createTextNode(output);
         newNode.appendChild(update);
         var status = document.getElementById("status");
         status.insertBefore(newNode, status.firstChild);
-        //alert("Did i get here?");
     }
 </script>
 </head>
 
-<body>
+<body onload="render_updates()">
 	<h1>Fecebook</h1>
 	<div id="nav">
 		<ul>
