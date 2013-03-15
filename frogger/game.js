@@ -191,7 +191,11 @@ function start_game() {
     lives = 3;
     level = 1;
     score = 0;
-    highscore = 0;
+    if (localStorage['highscore']){
+        highscore = localStorage['highscore'];
+        console.log("score set");}
+    else
+        highscore = 0;
     
     // Miscellaneous
     date = new Date();
@@ -206,6 +210,12 @@ function start_game() {
     img.onload = function() {
         imgLoaded = true;
     }
+    
+    // Music
+    $('#game_div').append("<audio src='assets/song.ogg' autoplay loop=true></audio>");
+    audioElement = document.createElement('audio');
+	audioElement.setAttribute('src', 'assets/jump.wav');
+	audioElement.load()
     
     addListeners();
     gameLoop();
@@ -230,6 +240,11 @@ function winReset() {
 }
 
 function moveFrog(dir) {
+    audioElement.play();
+    setTimeout(function() {
+        audioElement.pause();
+        audioElement.currentTime=0;
+        }, 100);
     switch (dir) {
         case "left":
             frogSprite.x = 81;
@@ -430,6 +445,7 @@ function onLilyPad() {
 }
 
 function killFrog() {
+    audioElement.play();
     frogSprite.x = 264;
     frogSprite.y = 371;
     frogSprite.width = 19;
@@ -454,6 +470,7 @@ function resetFrog() {
         level = 1;
         if (score > highscore)
             highscore = score;
+            localStorage['highscore'] = highscore;
         score = 0;
         date = new Date();
         startTime = date.getTime();
@@ -488,5 +505,6 @@ function updateGame() {
 
 function gameLoop() {
     timer = setInterval(updateGame, 33);
+//     setInterval(function() {audioElement.pause();}, 10);
 }
 
