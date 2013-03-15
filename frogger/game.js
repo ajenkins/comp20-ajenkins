@@ -193,7 +193,6 @@ function start_game() {
     score = 0;
     if (localStorage['highscore']){
         highscore = localStorage['highscore'];
-        console.log("score set");}
     else
         highscore = 0;
     
@@ -339,9 +338,6 @@ function renderGame() {
         for (var i = 0; i < all_cars.length; i++)
             drawObject(all_cars[i]);
             
-    }
-    else {
-        console.log("Error: could not load sprite sheet.");
     }
     
 }
