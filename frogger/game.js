@@ -23,14 +23,71 @@ function start_game() {
     log_short.width = 84;
     log_short.height = 21;
     log_short.x = 150;
-    log_short.y = 150;
+    log_short.y = 270;
     log_short.velocity = 3;
-    log_short2 = jQuery(true, {}, log_short);
-    log_short3 = jQuery(true, {}, log_short);
-    log_short2.x = 50;
-    log_short3.x = 250;
-    logs_short = [log_short, log_short2, log_short3];
+    log_short2 = jQuery.extend(true, {}, log_short);
+    log_short3 = jQuery.extend(true, {}, log_short);
+    log_short2.x = 0;
+    log_short3.x = 300;
+    log_short4 = jQuery.extend(true, {}, log_short);
+    log_short4.y = 172;
+    log_short4.velocity = -3;
+    log_short5 = jQuery.extend(true, {}, log_short4);
+    log_short6 = jQuery.extend(true, {}, log_short4);
+    log_short5.x = 0;
+    log_short6.x = 300;
+    logs_short = [log_short, log_short2, log_short3,
+                  log_short4, log_short5, log_short6];
+                  
+    // Logs medium
+    log_medium = new Object();
+    log_medium.srcX = 7;
+    log_medium.srcY = 197;
+    log_medium.width = 117;
+    log_medium.height = 22;
+    log_medium.x = 0;
+    log_medium.y = 103;
+    log_medium.velocity = -4;
+    log_medium2 = jQuery.extend(true, {}, log_medium);
+    log_medium2.x = 150;
+    log_medium3 = jQuery.extend(true, {}, log_medium);
+    log_medium3.x = 300;
+    log_medium4 = jQuery.extend(true, {}, log_medium);
+    log_medium4.x = 100;
+    log_medium4.y = 235;
+    log_medium4.velocity = -4;
+    log_medium5 = jQuery.extend(true, {}, log_medium4);
+    log_medium5.x = 250;
+    log_medium6 = jQuery.extend(true, {}, log_medium4);
+    log_medium6.x = 399;
+    logs_medium = [log_medium, log_medium2, log_medium3,
+                   log_medium4, log_medium5, log_medium6];
+                   
+    // Logs long
+    log_long = new Object();
+    log_long.srcX = 7;
+    log_long.srcY = 166;
+    log_long.width = 178;
+    log_long.height = 23;
+    log_long.x = 0;
+    log_long.y = 137;
+    log_long.velocity = 3;
+    log_long2 = jQuery.extend(true, {}, log_long);
+    log_long2.x = 450;
+    log_long3 = jQuery.extend(true, {}, log_long);
+    log_long.x = 100;
+    log_long3.y = 204;
+    log_long3.velocity = 3;
+    log_long4 = jQuery.extend(true, {}, log_long3);
+    log_long4.x = 399;
+    logs_long = [log_long, log_long2, log_long3, log_long4];
     
+    // All logs
+    all_logs = new Array();
+    all_logs.push.apply(all_logs, logs_short);
+    all_logs.push.apply(all_logs, logs_medium);
+    all_logs.push.apply(all_logs, logs_long);
+
     // Cars yellow
     car_yellow = new Object();
     car_yellow.srcX = 82;
@@ -112,6 +169,24 @@ function start_game() {
     all_cars.push.apply(all_cars, cars_white);
     all_cars.push.apply(all_cars, cars_truck);
     
+    // Lily pad
+    lily_pad = new Object();
+    lily_pad.srcX = 262;
+    lily_pad.srcY = 323;
+    lily_pad.width = 26;
+    lily_pad.height = 26;
+    lily_pad.x = 15;
+    lily_pad.y = 65;
+    lily_pad2 = jQuery.extend(true, {}, lily_pad);
+    lily_pad2.x = 100;
+    lily_pad3 = jQuery.extend(true, {}, lily_pad);
+    lily_pad3.x = 185;
+    lily_pad4 = jQuery.extend(true, {}, lily_pad);
+    lily_pad4.x = 269;
+    lily_pad5 = jQuery.extend(true, {}, lily_pad);
+    lily_pad5.x = 354;
+    lily_pads = [lily_pad, lily_pad2, lily_pad3, lily_pad4, lily_pad5];
+    
     // Scoring
     lives = 3;
     level = 1;
@@ -137,8 +212,6 @@ function start_game() {
 }
 
 function levelUp() {
-    frogX = init_frogX;
-    frogY = height-100;
     hopsUp = 0;
     farthest = 0;
     if (level % 5 == 0) {
@@ -146,6 +219,14 @@ function levelUp() {
     }
     else { score += 50; }
     level += 1;
+    clearInterval(timer);
+    setTimeout(winReset, 1000);
+}
+
+function winReset() {
+    frogX = init_frogX;
+    frogY = height-100;
+    gameLoop();
 }
 
 function moveFrog(dir) {
@@ -165,9 +246,6 @@ function moveFrog(dir) {
                     farthest = hopsUp;
                     score += 10;
                 }
-            }
-            else {
-                levelUp();
             }
             break;
         case "right":
@@ -192,11 +270,15 @@ function renderGame() {
     
     // Water
     ctx.fillStyle = '#191970';
-    ctx.fillRect(0, 0, 399, 300);
+    ctx.fillRect(0, 60, 399, 300);
     
     // Road
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 300, 399, 300);
+    
+    // Backdrop for logo
+    ctx.fillStyle = 
+    ctx.fillRect(0, 0, 399, 40);
     
     // Level
     ctx.fillStyle = '#0f0';
@@ -210,8 +292,11 @@ function renderGame() {
     
     // Images
     if (imgLoaded) {
-        // Header - "Frogger"
-        ctx.drawImage(img, 0, 0, 399, 54, 0, 0, 399, 54);
+        // Land
+        ctx.drawImage(img, 0, 55, 399, 52, 0, 45, 399, 52);
+        
+        // Logo
+        ctx.drawImage(img, 0, 0, 399, 54, 23, -8, 399, 54);
         
         // Purple roadsides
         ctx.drawImage(img, 0, 122, 399, 34, 0, 295, 399, 34);
@@ -223,7 +308,12 @@ function renderGame() {
         }
                       
         // Logs
-        drawObject(log_short);
+        for (var i = 0; i < all_logs.length; i++)
+            drawObject(all_logs[i]);
+            
+        // Lily pads
+        for (var i = 0; i < lily_pads.length; i++)
+            drawObject(lily_pads[i]);
         
         // Froggy
         ctx.drawImage(img, frogSprite.x, frogSprite.y, 
@@ -231,16 +321,9 @@ function renderGame() {
                       frogX, frogY, frogSprite.width, frogSprite.height);
         
         // Cars
-        for (var i = 0; i < cars_yellow.length; i++)
-            drawObject(cars_yellow[i]);
-        for (var i = 0; i < cars_tractor.length; i++)
-            drawObject(cars_tractor[i]);
-        for (var i = 0; i < cars_purple.length; i++)
-            drawObject(cars_purple[i]);
-        for (var i = 0; i < cars_white.length; i++)
-            drawObject(cars_white[i]);
-        for (var i = 0; i < cars_truck.length; i++)
-            drawObject(cars_truck[i]);
+        for (var i = 0; i < all_cars.length; i++)
+            drawObject(all_cars[i]);
+            
     }
     else {
         console.log("Error: could not load sprite sheet.");
@@ -324,6 +407,28 @@ function isFrogOverlapping (obj) {
     else { return false; }
 }
 
+function FrogOnLogVelocity() {
+    var log_of_frog_velocity = 0;
+    for (var i = 0; i < all_logs.length; i++) {
+        if (isFrogOverlapping(all_logs[i])) {
+            log_of_frog_velocity = all_logs[i].velocity;
+            break;
+        }
+    }
+    return log_of_frog_velocity;
+}
+
+function onLilyPad() {
+    var onpad = false;
+    for (var i = 0; i < lily_pads.length; i++) {
+        if (isFrogOverlapping(lily_pads[i])) {
+            onpad = true;
+            break;
+        }
+    }
+    return onpad;
+}
+
 function killFrog() {
     frogSprite.x = 264;
     frogSprite.y = 371;
@@ -336,6 +441,8 @@ function killFrog() {
 function resetFrog() {
     frogX = init_frogX;
     frogY = height-100;
+    hopsUp = 0;
+    farthest = 0;
     frogSprite.x = 11;
     frogSprite.y = 335;
     frogSprite.width = 22;
@@ -357,11 +464,24 @@ function resetFrog() {
 }
 
 function updateGame() {
-    moveObject(log_short);
+    for (var i = 0; i < all_logs.length; i++)
+        moveObject(all_logs[i]);
     for (var i = 0; i < all_cars.length; i++) {
         moveObject(all_cars[i]);
         if (isFrogOverlapping(all_cars[i]))
             killFrog();
+    }
+    if (frogY < 300) {
+        if (onLilyPad()) {
+            levelUp();
+        }
+        else {
+            logSpeed = FrogOnLogVelocity();
+            if (logSpeed != 0)
+                frogX += logSpeed;
+            else
+                killFrog();
+        }
     }
     renderGame();
 }
