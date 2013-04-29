@@ -191,7 +191,7 @@ function start_game() {
     lives = 3;
     level = 1;
     score = 0;
-    if (localStorage['highscore']){
+    if (localStorage['highscore'])
         highscore = localStorage['highscore'];
     else
         highscore = 0;
@@ -462,6 +462,12 @@ function resetFrog() {
     lives--;
     // Game Over
     if (lives == 0) {
+        $('input[name="score"]').val(score);
+        $(function() {
+            $("#dialog").dialog({
+                modal: true
+            });
+        });
         lives = 3;
         level = 1;
         if (score > highscore)
