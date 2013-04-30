@@ -26,17 +26,33 @@
 
     <h2>Issues Found</h2>
     <ol>
-    <h3 class="category">/username</h3>
-    <li>No character limit on search. Users can input any string and it will be printed
-    in its entirety by the application. Could cause slow down on server.
-    1MB string crashed Firefox.</li>
+    <li>
+        <p>Issue: No character limit on search. Users can input any string and it will be printed
+        in its entirety by the application.</p>
+        <p>Location: /username</p>
+        <p>Severity: Medium - Could cause slow down on server. 1MB string crashed Firefox.</p>
+        <p>Solution: Enforce a character-limit on input field.</p>
+    </li>
     <img class="pic" src="dragon.png" width="800"/>
-    <h3 class="category">/submit.json</h3>
-    <li>Anyone can send POST requests without any validation that a score is legitimate.</li>
+    <li>
+        <p>Issue: Anyone can send POST requests without any validation that a score is legitimate.</p>
+        <p>Location: /submit.json</p>
+        <p>Severity: High - No guarantee of information integrity. Scores can be easily fictionalized.</p>
+        <p>Solution: Enforce some means of client authentication</p>
+    </li>
     <img class="pic" src="hacked.png" width="800" />
-    <li>Repeatedly sending records could fill up the database.</li>
-    <h3 class="category">MongoDB</h3>
-    <li>Admin panel available at localhost:28017</li>
+    <li>
+        <p>Issue: Repeatedly sending records could fill up the database.</p>
+        <p>Location: /submit.json</p>
+        <p>Severity: Medium - Since it is easy for anyone to add a record, a script could fill database quickly</p>
+        <p>Solution: Only accept POST requests from authorized clients</p>
+    </li>
+    <li>
+        <p>Issue: MongoDB admin panel available without authentication to non-admins.</p>
+        <p>Location: Port 28017</p>
+        <p>Severity: Low - Not much control possible from admin panel</p>
+        <p>Solution: Set up MongoDB to use a non-default server (i.e., not 27017)</p>
+    </li>
     <img class="pic" src="mongod.png" width="800" />
 
     </ol>
