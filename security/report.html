@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Security Assessment</title>
+    <meta name="viewport" content="width=device=width; initial-scale=1.0; maximum-scale=1.0; 
+    user-scalable=0.0;"/>
+    <link rel="stylesheet" href="report.css"/>
+</head>
+
+<body>
+    <h1>Security Assessment of Cameron Jackson's Scorecenter Web Application</h1>
+    
+    <h2>Introduction</h2>
+    <p>The Scorecenter application is a website that provides an open interface for 
+    web-based games to post user scores and for users to review highscores. Scores are associated
+    with a game-title, player, and date-created and stored in a MongoDB database. The application
+    was written in Javascript use Node.JS and the Express framework. Since the application was
+    not designed with security in mind, multiple vulnerabilities are present.</p>
+
+    <h2>Abstract of Findings</h2>
+    <p>Few explicit measures were taken to ensure the quality of user-input, however, 
+    the tools used (Node.JS, Express, and MongoDB) prevented many security risks automatically.
+    Most of the vulnerabilities present in the application are not severe.</p>
+
+    <h2>Issues Found</h2>
+    <ol>
+    <li>
+        <p>Issue: No character limit on search. Users can input any string and it will be printed
+        in its entirety by the application.</p>
+        <p>Location: /username</p>
+        <p>Severity: Medium - Could cause slow down on server. 1MB string crashed Firefox.</p>
+        <p>Solution: Enforce a character-limit on input field.</p>
+    </li>
+    <img class="pic" src="dragon.png" width="800"/>
+    <li>
+        <p>Issue: Anyone can send POST requests without any validation that a score is legitimate.</p>
+        <p>Location: /submit.json</p>
+        <p>Severity: High - No guarantee of information integrity. Scores can be easily fictionalized.</p>
+        <p>Solution: Enforce some means of client authentication</p>
+    </li>
+    <img class="pic" src="hacked.png" width="800" />
+    <li>
+        <p>Issue: Repeatedly sending records could fill up the database.</p>
+        <p>Location: /submit.json</p>
+        <p>Severity: Medium - Since it is easy for anyone to add a record, a script could fill database quickly</p>
+        <p>Solution: Only accept POST requests from authorized clients</p>
+    </li>
+    <li>
+        <p>Issue: MongoDB admin panel available without authentication to non-admins.</p>
+        <p>Location: Port 28017</p>
+        <p>Severity: Low - Not much control possible from admin panel</p>
+        <p>Solution: Set up MongoDB to use a non-default server (i.e., not 27017)</p>
+    </li>
+    <img class="pic" src="mongod.png" width="800" />
+
+    </ol>
+    <h2>Security Measures In Place</h2>
+    <ul>
+        <li>Scripts can't run from username search or inside database.</li>
+        <li>$where and $or are not used in MongoDB queries so injection is not possible.</li>
+        <li>User input is never evaluated by application.</li>
+        <li>Character limit on values in records in database.</li>
+    </ul>
+</body>
+
+</html>
